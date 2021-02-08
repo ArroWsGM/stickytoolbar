@@ -43,11 +43,21 @@ const plugin = (editor) => {
   function setSticky() {
     const container = editor.getContainer();
 
-    const toolbars = container.querySelectorAll(`${stickyToolbar}, ${stickyMenu}`);
+    const toolbars = container.querySelectorAll(`${stickyToolbar}, ${stickyMenu}`) || [];
     let toolbarHeights = 0;
     toolbars.forEach(toolbar => {
       toolbarHeights += toolbar.offsetHeight;
     });
+
+    if (container.getBoundingClientRect().bottom - toolbarHeights < toolbarHeights) {
+      container.style.paddingTop = 0;
+
+      toolbars.forEach(toolbar => {
+        toolbar.style = null;
+      });
+
+      return;
+    }
 
     if (!editor.inline && container && container.offsetParent) {
       let statusbar = '';
@@ -131,7 +141,7 @@ const plugin = (editor) => {
 
     const editorPosition = container.getBoundingClientRect().top,
       statusbar = container.querySelector(stickyStatus),
-      toolbars = container.querySelectorAll(`${stickyToolbar}, ${stickyMenu}`);
+      toolbars = container.querySelectorAll(`${stickyToolbar}, ${stickyMenu}`) || [];
 
     const statusbarHeight = statusbar ? statusbar.offsetHeight : 0;
 
@@ -142,11 +152,7 @@ const plugin = (editor) => {
 
     const stickyHeight = -(container.offsetHeight - toolbarHeights - statusbarHeight);
 
-    if (editorPosition < stickyHeight + offset) {
-      return true;
-    }
-
-    return false;
+    return editorPosition < stickyHeight + offset;
   }
 };
 

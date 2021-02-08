@@ -1,7 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+// const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const pluginName = 'stickytoolbar';
 
@@ -37,17 +38,10 @@ module.exports = {
     ])
   ],
   optimization: {
+    minimize: true,
     minimizer: [
-      new UglifyJsPlugin({
-        test: /\.min\.js$/,
-        cache: true,
-        parallel: true,
-        uglifyOptions: {
-          compress: false,
-          ecma: 5,
-          mangle: true
-        },
-        sourceMap: true
+      new TerserPlugin({
+        test: /\.min\.js$/
       })
     ]
   }
